@@ -1,7 +1,8 @@
 **Note: Sorry, I've been super busy learning and doing other stuff.This was done in 2015 so you can imagine that the code got  a little bit outdated by now...*
 
+# Radial Progress Chart
 
-# Radial Progress Chart 
+## THIS IS A FORK
 
 > Radial Progress Chart started as a weekend project. It’s written on the top of D3.js and was heavily inspired by <a href="https://www.apple.com/watch/health-and-fitness/">Apple Watch Activity</a> and D3 stub of <a href="http://bl.ocks.org/mbostock/1096355">Polar Clock
 
@@ -33,7 +34,7 @@ Download the latest version from Github or use your favorite package manager to 
     $ bower install radial-progress-chart
 
     $ component install pablomolnar/radial-progress-chart
-    
+
     $ spm install radial-progress-chart
 
 Check out project page [http://pablomolnar.github.io/radial-progress-chart](http://pablomolnar.github.io/radial-progress-chart)
@@ -52,11 +53,11 @@ Sure, pull request are welcome. Build the project locally using the following st
 
     $ npm install
     $ npm run-script build
-    
+
 Remember to test and hint your code with:
 
     $ npm test
-    $ npm run-script hint    
+    $ npm run-script hint
 
 ##Publishing
 

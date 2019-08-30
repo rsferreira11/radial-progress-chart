@@ -55,11 +55,19 @@ function RadialProgressChart(query, options) {
       return (self.options.stroke.width / 2) * m;
     });
 
-  var background = d3.svg.arc()
+  var background = self.background = d3.svg.arc()
     .startAngle(0)
-    .endAngle(τ)
+    .endAngle(function(item) {
+      return item.backgroundPercentage / 100 * (Math.PI * 2);
+    })
     .innerRadius(innerRadius)
-    .outerRadius(outerRadius);
+    .outerRadius(outerRadius)
+    .cornerRadius(function (d) {
+      // Workaround for d3 bug https://github.com/mbostock/d3/issues/2249
+      // Reduce corner radius when corners are close each other
+      var m = d.backgroundPercentage >= 90 ? (100 - d.backgroundPercentage) * 0.1 : 1;
+      return (self.options.stroke.width / 2) * m;
+    });
 
   // create svg
   self.svg = d3.select(query).append("svg")
@@ -82,7 +90,7 @@ function RadialProgressChart(query, options) {
   var dropshadowId = "dropshadow-" + Math.random();
   var filter = defs.append("filter").attr("id", dropshadowId);
   if(self.options.shadow.width > 0) {
-    
+
     filter.append("feGaussianBlur")
       .attr("in", "SourceAlpha")
       .attr("stdDeviation", self.options.shadow.width)
@@ -144,14 +152,14 @@ function RadialProgressChart(query, options) {
     .data(series)
     .enter().append("g");
 
-  self.field.append("path").attr("class", "progress").attr("filter", "url(#" + dropshadowId +")");
-
   self.field.append("path").attr("class", "bg")
     .style("fill", function (item) {
       return item.color.background;
     })
-    .style("opacity", 0.2)
+    // .style("opacity", 0.5)
     .attr("d", background);
+
+  self.field.append("path").attr("class", "progress").attr("filter", "url(#" + dropshadowId +")");
 
   self.field.append("text")
     .classed('rbc-label rbc-label-start', true)
@@ -210,7 +218,7 @@ RadialProgressChart.prototype.update = function (data) {
 
   // calculate from percentage and new percentage for the progress animation
   self.options.series.forEach(function (item) {
-    item.fromPercentage = item.percentage ? item.percentage : 5;
+    item.fromPercentage = item.percentage;
     item.percentage = (item.value - self.options.min) * 100 / (self.options.max - self.options.min);
   });
 
@@ -229,7 +237,7 @@ RadialProgressChart.prototype.update = function (data) {
     .attrTween("d", function (item) {
       var interpolator = d3.interpolateNumber(item.fromPercentage, item.percentage);
       return function (t) {
-        item.percentage = interpolator(t);
+        item.percentage = Math.max(0, interpolator(t));
         return self.progress(item);
       };
     })
@@ -320,6 +328,7 @@ RadialProgressChart.normalizeOptions = function (options) {
       index: i,
       value: item.value,
       labelStart: item.labelStart,
+      backgroundPercentage: item.backgroundPercentage,
       color: RadialProgressChart.normalizeColor(item.color, defaultColorsIterator)
     };
   }
