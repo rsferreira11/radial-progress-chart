@@ -218,7 +218,7 @@ RadialProgressChart.prototype.update = function (data) {
 
   // calculate from percentage and new percentage for the progress animation
   self.options.series.forEach(function (item) {
-    item.fromPercentage = item.percentage;
+    item.fromPercentage = item.percentage || 0;
     item.percentage = (item.value - self.options.min) * 100 / (self.options.max - self.options.min);
   });
 
